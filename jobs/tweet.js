@@ -4,16 +4,16 @@ const {tweet_with_video, tweet} = require('../util/Tweet')
 const download = require('../util/download')
 const {Feed} = require('../models')
 const path = require('path')
-const appDir = path.dirname(require.main.filename);
+const appDir = path.dirname(require.main.filename)
 
-const queue = new Queue('tweetQueue', process.env.REDIS_URI);
+const queue = new Queue('tweetQueue', process.env.REDIS_URI)
 
 queue.process(5, async function(job, done){
     const data = job.data;
     if(data.videoMeta.duration > 140) {
-        return done(new Error('Video too long'));
+        return done(new Error('Video too long'))
     }
-    const mediaPath = appDir + '/downloads/' + data.id + '.mp4';
+    const mediaPath = appDir + '/downloads/' + data.id + '.mp4'
     download(data.videoUrl, mediaPath).then(() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
@@ -42,15 +42,19 @@ queue.on('completed', async function(job, result){
     console.log(`${job.data.id} COMPLETED`)
     Feed.create(result)
     try {
-        fs.unlinkSync(result.videoPath)
+        setTimeout(function() {
+            fs.unlinkSync(result.videoPath)
+        }, 2000)
     } catch (error) {}
     job.remove();
 })
 queue.on('failed', function(job, err){
     console.error(err)
-    const mediaPath = appDir + '/downloads/' + job.data.id + '.mp4';
+    const mediaPath = appDir + '/downloads/' + job.data.id + '.mp4'
     try {
-        fs.unlinkSync(mediaPath)
+        setTimeout(function() {
+            fs.unlinkSync(mediaPath)
+        }, 2000)
     } catch (error) {}
     job.remove()
 })
