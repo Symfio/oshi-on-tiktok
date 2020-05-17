@@ -10,9 +10,11 @@ const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-const eventStream = (username) => {
+const eventStream = async (username) => {
     console.info("Listen to "+ username)
-    const users = TikTokScraper.userEvent(username, { number: 1 });
+    const users = TikTokScraper.userEvent(username, { 
+        number: 1
+    });
     users.on('data', json => {
         Feed.countDocuments({
             tiktok_id: json.id
@@ -23,10 +25,10 @@ const eventStream = (username) => {
         })
     });
     users.on('done', () => {
-        //completed
+        console.log(`${username} CONNECTED`)
     });
     users.on('error', error => {
-        //error message
+        console.error(`${username} ${error}`)
     });
     users.scrape();
 }
@@ -48,8 +50,8 @@ const run = async (username) => {
 
 (() => {
     try {
-        USERNAME_LIST.forEach(username => {
-            eventStream(username);
+        USERNAME_LIST.forEach((username, index) => {
+            sleep(10000 * index).then(() => eventStream(username));
         })
     } catch (error) {
         console.log(error);

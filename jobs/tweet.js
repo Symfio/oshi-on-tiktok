@@ -8,7 +8,7 @@ const appDir = path.dirname(require.main.filename);
 
 const queue = new Queue('tweetQueue', process.env.REDIS_URI);
 
-queue.process(10, async function(job, done){
+queue.process(5, async function(job, done){
     const data = job.data;
     if(data.videoMeta.duration > 140) {
         return done(new Error('Video too long'));
