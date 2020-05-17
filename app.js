@@ -14,14 +14,14 @@ const eventStream = async (username) => {
     console.info("Listen to "+ username)
     const users = TikTokScraper.userEvent(username, { 
         number: 1
-    });
+    })
     users.on('data', json => {
         Feed.countDocuments({
             tiktok_id: json.id
         }).then(exist => {
             if(exist > 0) return
-            console.log(json.id + " ADDED to Queue");
-            queue.add(json);
+            console.log(json.id + " ADDED to Queue")
+            queue.add(json)
         })
     });
     users.on('done', () => {
