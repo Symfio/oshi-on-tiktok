@@ -16,7 +16,7 @@ queue.process(10, async function(job, done){
     const mediaPath = appDir + '/downloads/' + data.id + '.mp4';
     download(data.videoUrl, mediaPath).then(() => {
         console.log("Downloaded")
-        tweet_with_video('Tiktok Update from [' + data.authorMeta.name + ']', mediaPath).then(t => {
+        tweet_with_video(`Tiktok Update from  [${data.authorMeta.name}]`, mediaPath).then(t => {
             // tweet("Download disini", t.id_str)
             const result = {
                 tiktok_id: data.id,
@@ -38,7 +38,7 @@ queue.on('progress', function(job, progress) {
 })
 
 queue.on('completed', async function(job, result){
-    console.log(job.data.id + " COMPLETED")
+    console.log(`${job.data.id} COMPLETED`)
     Feed.create(result)
     try {
         fs.unlink(result.videoPath)
