@@ -1,9 +1,9 @@
-const Queue = require('bull');
+const Queue = require('bull')
 const fs = require('fs')
 const {tweet_with_video, tweet} = require('../util/Tweet')
 const download = require('../util/download')
 const {Feed} = require('../models')
-const path = require('path');
+const path = require('path')
 const appDir = path.dirname(require.main.filename);
 
 const queue = new Queue('tweetQueue', process.env.REDIS_URI);
@@ -15,14 +15,15 @@ queue.process(5, async function(job, done){
     }
     const mediaPath = appDir + '/downloads/' + data.id + '.mp4';
     download(data.videoUrl, mediaPath).then(() => {
-        console.log("Downloaded")
-        tweet_with_video(`Tiktok Update from  [${data.authorMeta.name}]`, mediaPath).then(t => {
-            // tweet("Download disini", t.id_str)
+        console.log("Video Downloaded")
+        const username = data.authorMeta.name
+        tweet_with_video(`Tiktok Update from  [${username}]`, mediaPath).then(async(t) => {
+            await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
             const result = {
                 tiktok_id: data.id,
                 text: data.text,
                 author_id: data.authorMeta.id,
-                author_name: data.authorMeta.name,
+                author_name: username,
                 video_url: data.videoUrl,
                 tiktok_createTime: data.createTime,
                 videoPath: mediaPath
