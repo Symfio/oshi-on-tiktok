@@ -40,10 +40,17 @@ queue.on('progress', function(job, progress) {
 queue.on('completed', async function(job, result){
     console.log(job.data.id + " COMPLETED")
     Feed.create(result)
+    try {
+        fs.unlink(result.videoPath)
+    } catch (error) {}
     job.remove();
 })
 queue.on('failed', function(job, err){
     console.error(err)
+    const mediaPath = appDir + '/downloads/' + job.data.id + '.mp4';
+    try {
+        fs.unlink(mediaPath)
+    } catch (error) {}
     job.remove()
 })
 
