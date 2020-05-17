@@ -1,6 +1,6 @@
 require('dotenv').config()
 process.env.TZ = 'Asia/Jakarta'
-const TikTokScraper = require('tiktok-scraper');
+const TikTokScraper = require('tiktok-scraper')
 const queue = require('./jobs/tweet')
 const {Feed} = require('./models')
 
@@ -41,8 +41,8 @@ const run = async (username) => {
             tiktok_id: data.id
         }).then(exist => {
             if(exist > 0) return
-            console.log(data.id + " ADDED to Queue");
-            queue.add(data);
+            console.log(data.id + " ADDED to Queue")
+            queue.add(data)
         })
     })
     console.log("OK")
@@ -51,10 +51,10 @@ const run = async (username) => {
 (() => {
     try {
         USERNAME_LIST.forEach((username, index) => {
-            sleep(10000 * index).then(() => eventStream(username));
+            sleep(10000 * index).then(() => eventStream(username))
         })
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 })();
 
