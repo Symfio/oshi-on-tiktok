@@ -32,10 +32,8 @@ queue.process(5, async function(job, done){
                 await tweet(`Download disini: ${downloadUrl}`, t.id_str)
                 const result = {
                     tiktok_id: data.id,
-                    text: data.text,
                     author_id: data.authorMeta.id,
                     author_name: username,
-                    video_url: data.videoUrl,
                     tiktok_createTime: data.createTime
                 }
                 return done(null, result)
