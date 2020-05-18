@@ -5,6 +5,7 @@ const queue = require('./jobs/tweet')
 const {Feed} = require('./models')
 const cron = require('node-cron')
 const { USERNAME_LIST } = require('./constants')
+const CRON_EXPRESSION = process.env.CRON_EXPRESSION || "*/5 * * * *"
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -50,7 +51,7 @@ const run = async (username) => {
 }
 
 (() => {
-    cron.schedule("*/5 * * * *", () => {
+    cron.schedule(CRON_EXPRESSION, () => {
         try {
             USERNAME_LIST.forEach((username, index) => {
                 sleep(8000 * index).then(() => run(username))
