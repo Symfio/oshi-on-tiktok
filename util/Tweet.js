@@ -32,7 +32,8 @@ const tweet = (text, reply_status_id = null) => {
 const tweet_with_video = (text, mediaPath) => {
     // mediaData = fs.readFileSync(mediaPath);
     return new Promise((resolve, reject) => {
-        T.postMediaChunked({
+        console.log(mediaPath)
+        return T.postMediaChunked({
             file_path: mediaPath
         }, function (err, data, response) {
             if (err) {

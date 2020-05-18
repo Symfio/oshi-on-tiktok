@@ -21,7 +21,7 @@ queue.process(5, async function(job, done){
     download(data.videoUrl, fileName).then(async() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
-        await sleep(1000);
+        await sleep(2000);
         const pathFile = path.resolve('downloads', fileName)
         tweet_with_video(`Update from [${username}]`, pathFile).then(async(t) => {
             await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
