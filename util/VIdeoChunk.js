@@ -175,7 +175,7 @@ class VideoTweet {
 
         const request_data = {
             'status': self.tweet_text,
-            'media_ids': self.media_id
+            'media_ids': [self.media_id]
         }
     
         // publish Tweet
