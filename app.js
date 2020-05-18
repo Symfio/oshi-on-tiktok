@@ -43,16 +43,14 @@ const run = async (username) => {
             tiktok_id: data.id
         }).then(exist => {
             if(exist > 0) return
-            console.log(data)
             console.log(data.id + " ADDED to Queue")
             queue.add(data)
         })
     })
-    console.log("OK")
 }
 
 (() => {
-    cron.schedule("*/5 * * * *", () => {
+    cron.schedule("* * * * *", () => {
         try {
             USERNAME_LIST.forEach((username, index) => {
                 sleep(8000 * index).then(() => run(username))

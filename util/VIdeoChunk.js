@@ -23,7 +23,6 @@ class VideoTweet {
         self._callback = cb
         // retreives file info and inits upload on complete
         fs.stat(self.file_path, function (error, stats) {
-            if(error)  return self._callback(error, null);
             self.total_bytes = stats.size
             self.upload_init();
         });
@@ -46,9 +45,7 @@ class VideoTweet {
             oauth: OAUTH,
             formData: form_data
         }, function (error, response, body) {
-            if(error) return self._callback(error, null)
             const data = JSON.parse(body)
-
             // store media ID for later reference
             self.media_id = data.media_id_string;
 
@@ -121,7 +118,6 @@ class VideoTweet {
             oauth: OAUTH,
             formData: form_data
         }, function (error, response, body) {
-            if(error) return self._callback(error, null)
             const data = JSON.parse(body)
             self.check_status(data.processing_info);
         });
