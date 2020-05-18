@@ -36,8 +36,9 @@ const eventStream = async (username) => {
 const run = async (username) => {
     // User feed by username
     console.info(`[*] GET DATA ${username}`)
-    const posts = await TikTokScraper.user(username, { number: 1 });
-    posts.collector.forEach(data => {
+    const posts = await TikTokScraper.user(username, { number: 2 });
+    const post_collectors = Object.assign([], posts.collector).reverse();
+    post_collectors.forEach(data => {
         Feed.countDocuments({
             tiktok_id: data.id
         }).then(exist => {
