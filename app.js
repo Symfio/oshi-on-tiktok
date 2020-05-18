@@ -50,7 +50,7 @@ const run = async (username) => {
 }
 
 (() => {
-    cron.schedule("* * * * *", () => {
+    cron.schedule("*/5 * * * *", () => {
         try {
             USERNAME_LIST.forEach((username, index) => {
                 sleep(8000 * index).then(() => run(username))
