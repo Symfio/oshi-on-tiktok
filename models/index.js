@@ -3,7 +3,6 @@ const fs = require('fs')
 var mongo_config = {
     useNewUrlParser:true,
     useUnifiedTopology: true,
-    useMongoClient: true
 }
 if(process.env.MONGO_USER) {
     mongo_config['auth'] = { authSource: process.env.MONGO_AUTH_SOURCE, authdb: "admin" }
