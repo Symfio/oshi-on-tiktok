@@ -2,7 +2,7 @@ require('dotenv').config()
 process.env.TZ = 'Asia/Jakarta'
 const TikTokScraper = require('tiktok-scraper')
 const queue = require('./jobs/tweet')
-const {Feed} = require('./models')
+const {mongoose, Feed} = require('./models')
 
 const { USERNAME_LIST } = require('./constants')
 

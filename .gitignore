@@ -16,3 +16,4 @@ package-lock.json
 .env
 log.txt
 sync.js
+test.js

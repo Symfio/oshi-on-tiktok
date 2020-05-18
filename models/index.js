@@ -10,12 +10,16 @@ if(process.env.MONGO_USER) {
     mongo_config['pass'] = process.env.MONGO_PASS
 }
 mongoose.connect(process.env.MONGO_URI, mongo_config, function (err) {  
-    if (err) throw err;
+    if (err) {
+        throw err;
+        process.exit()
+    }
     console.info('[*] Successfully connected');
 });
 var Feed = require('./Feed')(mongoose)
 
 module.exports = {
     Feed,
-    Schema: mongoose.Schema
+    Schema: mongoose.Schema,
+    mongoose
 }

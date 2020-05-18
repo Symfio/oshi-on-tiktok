@@ -18,6 +18,8 @@
     "bull": "^3.14.0",
     "dotenv": "^8.2.0",
     "mongoose": "^5.9.14",
+    "request": "^2.88.2",
+    "request-progress": "^3.0.0",
     "tiktok-scraper": "^1.1.10",
     "twit": "^2.2.11"
   }

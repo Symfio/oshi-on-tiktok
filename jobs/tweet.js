@@ -1,10 +1,9 @@
 const Queue = require('bull')
 const fs = require('fs')
-const {tweet_with_video, tweet} = require('../util/Tweet')
+const {tweet, VideoTweet} = require('../util/Tweet')
 const download = require('../util/download')
 const {Feed} = require('../models')
 const path = require('path')
-const appDir = path.dirname(require.main.filename)
 
 const queue = new Queue('tweetQueue', process.env.REDIS_URI)
 
@@ -21,9 +20,12 @@ queue.process(5, async function(job, done){
     download(data.videoUrl, fileName).then(async() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
-        await sleep(2000);
         const pathFile = path.resolve('downloads', fileName)
-        tweet_with_video(`Update from [${username}]`, pathFile).then(async(t) => {
+        new VideoTweet({
+            file_path: pathFile,
+            tweet_text: `Update from [${username}]`
+        }, async function(err, t) {
+            if(err) return done(new Error(err))
             await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
             const result = {
                 tiktok_id: data.id,
@@ -34,7 +36,7 @@ queue.process(5, async function(job, done){
                 tiktok_createTime: data.createTime
             }
             return done(null, result)
-        }).catch(err => done(new Error(err)))
+        })
     }).catch(err => done(new Error(err)))
     
 });
@@ -43,7 +45,7 @@ queue.on('progress', function(job, progress) {
     // console.log(`Job ${job.data.id} is ${progress * 100}% ready!`);
 });
 
-queue.on('completed', async function(job, result){
+queue.on('completed', function(job, result){
     console.log(`${job.data.id} COMPLETED`)
     Feed.create(result)
     const fileName = job.data.id + '.mp4'
