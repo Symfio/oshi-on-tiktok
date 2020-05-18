@@ -5,6 +5,8 @@ const T = new Twit({
     access_token: process.env.TWITTER_ACCESS_TOKEN,
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
 })
+const fs = require('fs')
+const VideoTweet = require('./VIdeoChunk')
 
 const tweet = (text, reply_status_id = null) => {
     return new Promise((resolve, reject) => {
@@ -33,31 +35,27 @@ const tweet_with_video = (text, mediaPath) => {
     // mediaData = fs.readFileSync(mediaPath);
     return new Promise((resolve, reject) => {
         console.log(mediaPath)
+        if(!fs.existsSync(mediaPath)) {
+            return reject("File not found")
+        }
         return T.postMediaChunked({
             file_path: mediaPath
         }, function (err, data, response) {
             if (err) {
-                return console.error(err)
+                console.error(err)
+                return reject(err)
             }
             const mediaIdStr = data.media_id_string;
-            const meta_params = {
-                media_id: mediaIdStr
+            const params = {
+                status: text,
+                media_ids: [mediaIdStr]
             };
-            T.post("media/metadata/create", meta_params, function (err, data, response) {
+            T.post("statuses/update", params, function (err, data, response) {
                 if (!err) {
-                    var params = {
-                        status: text,
-                        media_ids: [mediaIdStr]
-                    };
-                    T.post("statuses/update", params, function (err, data, response) {
-                        if (!err) {
-                            console.log("Tweet SENT " + data.id_str)
-                            resolve(data)
-                        } else {
-                            reject(err)
-                        }
-                    })
+                    console.log("Tweet SENT " + data.id_str)
+                    resolve(data)
                 } else {
+                    console.error(err)
                     reject(err)
                 }
             })
@@ -69,4 +67,5 @@ module.exports = {
     T,
     tweet,
     tweet_with_video,
+    VideoTweet
 }
