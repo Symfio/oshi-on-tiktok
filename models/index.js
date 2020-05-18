@@ -5,7 +5,7 @@ var mongo_config = {
     useUnifiedTopology: true
 }
 if(process.env.MONGO_USER) {
-    mongo_config['auth'] = { "authSource": "drive-clone-svc" }
+    mongo_config['auth'] = { "authSource": process.env.MONGO_AUTH_SOURCE }
     mongo_config['user'] = process.env.MONGO_USER
     mongo_config['pass'] = process.env.MONGO_PASS
 }
