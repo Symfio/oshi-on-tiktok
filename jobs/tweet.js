@@ -8,15 +8,20 @@ const appDir = path.dirname(require.main.filename)
 
 const queue = new Queue('tweetQueue', process.env.REDIS_URI)
 
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
 queue.process(5, async function(job, done){
     const data = job.data
     if(data.videoMeta.duration > 140) {
         return done(new Error('Video too long'))
     }
     const mediaPath = appDir + '/downloads/' + data.id + '.mp4'
-    download(data.videoUrl, mediaPath).then(() => {
+    download(data.videoUrl, mediaPath).then(async() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
+        await sleep(1000);
         tweet_with_video(`Update from [${username}]`, mediaPath).then(async(t) => {
             await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
             const result = {
@@ -43,7 +48,9 @@ queue.on('completed', async function(job, result){
     Feed.create(result)
     try {
         setTimeout(function() {
-            fs.unlinkSync(result.videoPath)
+            if (fs.existsSync(result.videoPath)) {
+                fs.unlinkSync(result.videoPath)
+            }
         }, 2000)
     } catch (error) {}
     job.remove()
@@ -53,7 +60,9 @@ queue.on('failed', function(job, err){
     const mediaPath = appDir + '/downloads/' + job.data.id + '.mp4'
     try {
         setTimeout(function() {
-            fs.unlinkSync(mediaPath)
+            if (fs.existsSync(mediaPath)) {
+                fs.unlinkSync(mediaPath);
+            }
         }, 2000)
     } catch (error) {}
     job.remove()
