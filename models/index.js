@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 const fs = require('fs')
 var mongo_config = {
-    useNewUrlParser:false,
-    useUnifiedTopology: false
+    useNewUrlParser:true,
+    useUnifiedTopology: true
 }
-mongoose.connect(process.env.MONGO_URI, mongo_config, function (err) {    
+if(process.env.MONGO_USER) {
+    mongo_config['auth'] = { "authSource": "drive-clone-svc" }
+    mongo_config['user'] = process.env.MONGO_USER
+    mongo_config['pass'] = process.env.MONGO_PASS
+}
+mongoose.connect(process.env.MONGO_URI, mongo_config, function (err) {  
     if (err) throw err;
     console.info('[*] Successfully connected');
 });
