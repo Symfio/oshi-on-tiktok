@@ -2,8 +2,8 @@ require('dotenv').config()
 process.env.TZ = 'Asia/Jakarta'
 const TikTokScraper = require('tiktok-scraper')
 const queue = require('./jobs/tweet')
-const {mongoose, Feed} = require('./models')
-
+const {Feed} = require('./models')
+const cron = require('node-cron')
 const { USERNAME_LIST } = require('./constants')
 
 const sleep = (milliseconds) => {
@@ -35,12 +35,14 @@ const eventStream = async (username) => {
 
 const run = async (username) => {
     // User feed by username
-    const posts = await TikTokScraper.user(username, { number: 1 });
+    console.info(`[*] GET DATA ${username}`)
+    const posts = await TikTokScraper.user(username, { number: 2 });
     posts.collector.forEach(data => {
         Feed.countDocuments({
             tiktok_id: data.id
         }).then(exist => {
             if(exist > 0) return
+            console.log(data)
             console.log(data.id + " ADDED to Queue")
             queue.add(data)
         })
@@ -49,13 +51,15 @@ const run = async (username) => {
 }
 
 (() => {
-    try {
-        USERNAME_LIST.forEach((username, index) => {
-            sleep(10000 * index).then(() => eventStream(username))
-        })
-    } catch (error) {
-        console.log(error)
-    }
+    cron.schedule("*/5 * * * *", () => {
+        try {
+            USERNAME_LIST.forEach((username, index) => {
+                sleep(5000 * index).then(() => run(username))
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    })
 })();
 
 console.info("[*] Service is Running, Press CTRL+C to stop.")
