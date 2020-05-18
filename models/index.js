@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const fs = require('fs')
 var mongo_config = {
-    useNewUrlParser:true,
-    useUnifiedTopology: true
+    useNewUrlParser:false,
+    useUnifiedTopology: false
 }
 mongoose.connect(process.env.MONGO_URI, mongo_config, function (err) {    
     if (err) throw err;
