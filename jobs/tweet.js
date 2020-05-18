@@ -26,16 +26,21 @@ queue.process(5, async function(job, done){
             tweet_text: `Update from [${username}]`
         }, async function(err, t) {
             if(err) return done(new Error(err))
-            await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
-            const result = {
-                tiktok_id: data.id,
-                text: data.text,
-                author_id: data.authorMeta.id,
-                author_name: username,
-                video_url: data.videoUrl,
-                tiktok_createTime: data.createTime
+            if("id_str" in t) {
+                await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
+                const result = {
+                    tiktok_id: data.id,
+                    text: data.text,
+                    author_id: data.authorMeta.id,
+                    author_name: username,
+                    video_url: data.videoUrl,
+                    tiktok_createTime: data.createTime
+                }
+                return done(null, result)
+            } else {
+                console.log(t)
+                return done(new Error("Failed to Upload Video"))
             }
-            return done(null, result)
         })
     }).catch(err => done(new Error(err)))
     
