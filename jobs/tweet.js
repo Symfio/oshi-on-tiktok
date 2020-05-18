@@ -17,12 +17,12 @@ queue.process(5, async function(job, done){
     if(data.videoMeta.duration > 140) {
         return done(new Error('Video too long'))
     }
-    const mediaPath = appDir + '/downloads/' + data.id + '.mp4'
-    download(data.videoUrl, mediaPath).then(async() => {
+    const fileName = data.id + '.mp4'
+    download(data.videoUrl, fileName).then(async() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
         await sleep(1000);
-        tweet_with_video(`Update from [${username}]`, mediaPath).then(async(t) => {
+        tweet_with_video(`Update from [${username}]`, fileName).then(async(t) => {
             await tweet(`Download disini: ${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`, t.id_str)
             const result = {
                 tiktok_id: data.id,
@@ -30,8 +30,7 @@ queue.process(5, async function(job, done){
                 author_id: data.authorMeta.id,
                 author_name: username,
                 video_url: data.videoUrl,
-                tiktok_createTime: data.createTime,
-                videoPath: mediaPath
+                tiktok_createTime: data.createTime
             }
             return done(null, result)
         }).catch(err => done(new Error(err)))
@@ -46,10 +45,12 @@ queue.on('progress', function(job, progress) {
 queue.on('completed', async function(job, result){
     console.log(`${job.data.id} COMPLETED`)
     Feed.create(result)
+    const fileName = job.data.id + '.mp4'
+    const filePath = path.resolve('downloads', fileName);
     try {
         setTimeout(function() {
-            if (fs.existsSync(result.videoPath)) {
-                fs.unlinkSync(result.videoPath)
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath)
             }
         }, 2000)
     } catch (error) {}
@@ -57,11 +58,12 @@ queue.on('completed', async function(job, result){
 });
 queue.on('failed', function(job, err){
     console.error(err)
-    const mediaPath = appDir + '/downloads/' + job.data.id + '.mp4'
+    const fileName = job.data.id + '.mp4'
+    const filePath = path.resolve('downloads', fileName);
     try {
         setTimeout(function() {
-            if (fs.existsSync(mediaPath)) {
-                fs.unlinkSync(mediaPath);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
             }
         }, 2000)
     } catch (error) {}

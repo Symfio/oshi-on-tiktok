@@ -4,11 +4,11 @@ const Fs = require('fs')
 const Path = require('path')  
 const Axios = require('axios')
 
-async function downloadFile (videoUrl, mediaPath) {
+async function downloadFile (videoUrl, videoName) {
 
   const url = videoUrl
-  const path = Path.resolve(mediaPath)
-  const writer = Fs.createWriteStream(path)
+  const filePath = Path.resolve('downloads', videoName);
+  const writer = Fs.createWriteStream(filePath)
 
   // axios image download with response type "stream"
   const response = await Axios({
