@@ -8,6 +8,7 @@ async function downloadFile (videoUrl, mediaPath) {
 
   const url = videoUrl
   const path = Path.resolve(mediaPath)
+  const writer = Fs.createWriteStream(path)
 
   // axios image download with response type "stream"
   const response = await Axios({
@@ -17,18 +18,13 @@ async function downloadFile (videoUrl, mediaPath) {
   })
 
   // pipe the result stream into a file on disc
-  response.data.pipe(Fs.createWriteStream(path))
+  response.data.pipe(writer)
 
   // return a promise and resolve when download finishes
   return new Promise((resolve, reject) => {
-    response.data.on('end', () => {
-      resolve()
-    })
-
-    response.data.on('error', () => {
-      reject()
-    })
-  })
+    writer.on('finish', resolve)
+    writer.on('error', reject)
+  });
 
 }
 
