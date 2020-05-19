@@ -45,7 +45,7 @@ const run = async (username) => {
         }).then(exist => {
             if(exist > 0) return
             console.log(data.id + " ADDED to Queue")
-            queue.add(data)
+            queue.add(data, { delay: 5000 })
         })
     })
 }
