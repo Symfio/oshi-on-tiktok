@@ -36,6 +36,7 @@ queue.process(5, async function(job, done){
         }, async function(err, t) {
             if(err) return done(new Error(err))
             if("id_str" in t) {
+                await sleep(2000)
                 await tweet(`Download disini: ${downloadUrl}`, t.id_str)
                 const result = {
                     tiktok_id: data.id,
