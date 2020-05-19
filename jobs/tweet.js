@@ -24,13 +24,19 @@ queue.process(5, async function(job, done){
         const pathFile = path.resolve('downloads', fileName)
         const downloadUrl = `${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`
         await sleep(10000)
+        const regexp = new RegExp('#([^\\s]*)','g')
+        let caption = data.text
+        caption = caption.replace(regexp, '');
+        caption = caption.replace(/@/g, '@.')
+        caption = caption.trim()
+        const tweet_text = `Update dari ${nickname ? nickname : username}:\n${caption}`
         new VideoTweet({
             file_path: pathFile,
-            tweet_text: `Update dari ${nickname ? nickname : username}\n\n${downloadUrl}`
+            tweet_text: tweet_text
         }, async function(err, t) {
             if(err) return done(new Error(err))
             if("id_str" in t) {
-                // await tweet(`Download disini: ${downloadUrl}`, t.id_str)
+                await tweet(`Download disini: ${downloadUrl}`, t.id_str)
                 const result = {
                     tiktok_id: data.id,
                     author_id: data.authorMeta.id,
