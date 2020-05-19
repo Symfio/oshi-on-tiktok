@@ -23,13 +23,14 @@ queue.process(5, async function(job, done){
         const nickname = data.authorMeta.nickName
         const pathFile = path.resolve('downloads', fileName)
         const downloadUrl = `${process.env.DOWNLOAD_SERVICE_URL}/${username}/${data.id}`
+        await sleep(10000)
         new VideoTweet({
             file_path: pathFile,
-            tweet_text: `Update dari ${nickname ? nickname : username}`
+            tweet_text: `Update dari ${nickname ? nickname : username}\n\n${downloadUrl}`
         }, async function(err, t) {
             if(err) return done(new Error(err))
             if("id_str" in t) {
-                await tweet(`Download disini: ${downloadUrl}`, t.id_str)
+                // await tweet(`Download disini: ${downloadUrl}`, t.id_str)
                 const result = {
                     tiktok_id: data.id,
                     author_id: data.authorMeta.id,
