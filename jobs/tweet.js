@@ -37,12 +37,13 @@ queue.process(5, async function(job, done){
             if(err) return done(new Error(err))
             if("id_str" in t) {
                 // await sleep(2000)
-                // await tweet(`Download disini: ${downloadUrl}`, t.id_str)
                 const result = {
                     tiktok_id: data.id,
                     author_id: data.authorMeta.id,
                     author_name: username,
-                    tiktok_createTime: data.createTime
+                    tiktok_createTime: data.createTime,
+                    downloadUrl: downloadUrl,
+                    tweet_id: t.id_str
                 }
                 return done(null, result)
             } else {
@@ -58,18 +59,20 @@ queue.on('progress', function(job, progress) {
     // console.log(`Job ${job.data.id} is ${progress * 100}% ready!`);
 });
 
-queue.on('completed', function(job, result){
+queue.on('completed', async function(job, result){
     console.log(`${job.data.id} COMPLETED`)
-    Feed.create(result)
+    await Feed.create(result)
+
     const fileName = job.data.id + '.mp4'
     const filePath = path.resolve('downloads', fileName);
     try {
-        setTimeout(function() {
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath)
-            }
-        }, 2000)
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath)
+        }
     } catch (error) {}
+
+    await sleep(1000 * 60).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
+
     job.remove()
 });
 queue.on('failed', function(job, err){
