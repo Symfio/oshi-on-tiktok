@@ -56,7 +56,7 @@ class VideoTweet {
 
     upload_append() {
         var buffer_length = 5000000;
-        var buffer = new Buffer(buffer_length);
+        var buffer = new Buffer.alloc(buffer_length);
         var bytes_sent = 0;
     
         var self = this;
