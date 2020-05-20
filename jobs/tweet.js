@@ -71,7 +71,7 @@ queue.on('completed', async function(job, result){
         }
     } catch (error) {}
 
-    await sleep(1000 * 60).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
+    // await sleep(1000 * 60).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
 
     job.remove()
 });
