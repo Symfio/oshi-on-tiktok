@@ -42,8 +42,14 @@ const run = async (username) => {
     post_collectors.forEach(data => {
         Feed.countDocuments({
             tiktok_id: data.id
-        }).then(exist => {
+        }).then(async exist => {
             if(exist > 0) return
+            if(process.env.WITHOUT_WATERMARK) {
+                data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
+                    meta.authorMeta = {...data.authorMeta}
+                    return meta
+                })
+            }
             console.log(data.id + " ADDED to Queue")
             queue.add(data, { delay: 5000 })
         })
