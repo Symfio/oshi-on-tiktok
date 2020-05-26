@@ -71,9 +71,9 @@ queue.on('completed', async function(job, result){
             fs.unlinkSync(filePath)
         }
     } catch (error) {}
-
-    await sleep(1000 * 60 * 5).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
-
+    setTimeout(() => {
+        tweet(`Download video: ${result.downloadUrl}`, result.tweet_id)
+    }, 1000 * 60 * 2)
     job.remove()
 });
 queue.on('failed', function(job, err){
@@ -81,11 +81,9 @@ queue.on('failed', function(job, err){
     const fileName = job.data.id + '.mp4'
     const filePath = path.resolve('downloads', fileName);
     try {
-        setTimeout(function() {
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }, 2000)
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath)
+        }
     } catch (error) {}
     job.remove()
 });
