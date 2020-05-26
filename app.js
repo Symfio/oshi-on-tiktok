@@ -46,7 +46,7 @@ const run = async (username) => {
         })
         if(exist > 0) return
         if(process.env.WITHOUT_WATERMARK) {
-            await sleep(1000)
+            await sleep(1000);
             data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
                 meta.authorMeta = {...data.authorMeta}
                 console.log("VIDEO noWatermark OK")

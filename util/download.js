@@ -2,16 +2,28 @@
 
 const fs = require('fs')
 const path = require('path')
-const Axios = require('axios')
-var request = require('request');
-var progress = require('request-progress');
+const request = require('request');
+const progress = require('request-progress');
+const { promisify } = require('util')
+const rp = promisify(request)
 
 function downloadFile(videoUrl, fileName) {
-	return new Promise((resolve, reject) => {
-		const filePath = path.resolve('downloads', fileName);
+	return new Promise(async(resolve, reject) => {
+		const filePath = path.resolve('downloads', fileName)
+		
+		if(process.env.WITHOUT_WATERMARK) {
+			videoUrl = await rp(videoUrl, {
+				followRedirect: true,
+				maxRedirects: 1,
+				headers: {
+					'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36'
+				}
+			}).then(r => r.a.request.uri.href)
+		}
+		
 		return progress(request(videoUrl), {
-			// throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms 
-			// delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms 
+			// throttle: 5000,                    // Throttle the progress event to 2000ms, defaults to 1000ms 
+			// delay: 5000,                       // Only start to emit after 1000ms delay, defaults to 0ms 
 			// lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length 
 		})
 		.on('progress', function (state) {
@@ -37,26 +49,6 @@ function downloadFile(videoUrl, fileName) {
 			resolve()
 		})
 		.pipe(fs.createWriteStream(filePath));
-	})
-}
-function downloadFile1(videoUrl, videoName) {
-	return new Promise(async(resolve, reject) => {
-		const url = videoUrl
-		const filePath = path.resolve('downloads', videoName);
-		const writer = fs.createWriteStream(filePath)
-
-		// axios image download with response type "stream"
-		const response = await Axios({
-			method: 'GET',
-			url: url,
-			responseType: 'stream'
-		})
-		// response.on('error', function (err) {
-		// 	fs.unlink(filePath, reject(null, err));
-		// });
-		response.data.pipe(writer)
-		writer.on('finish', resolve)
-		writer.on('error', reject)
 	});
 }
 
