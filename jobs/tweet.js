@@ -17,7 +17,8 @@ queue.process(5, async function(job, done){
         return done(new Error('Video too long'))
     }
     const fileName = data.id + '.mp4'
-    download(data.videoUrl, fileName).then(async() => {
+    const videoUrl = data.videoUrlNoWaterMark || data.videoUrl
+    download(videoUrl, fileName).then(async() => {
         console.log("Video Downloaded")
         const username = data.authorMeta.name
         const nickname = data.authorMeta.nickName
@@ -71,7 +72,7 @@ queue.on('completed', async function(job, result){
         }
     } catch (error) {}
 
-    // await sleep(1000 * 60).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
+    await sleep(1000 * 60 * 5).then(() => tweet(`Download video: ${result.downloadUrl}`, result.tweet_id))
 
     job.remove()
 });
