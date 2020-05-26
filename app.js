@@ -5,6 +5,7 @@ const queue = require('./jobs/tweet')
 const {Feed} = require('./models')
 const cron = require('node-cron')
 const { USERNAME_LIST } = require('./constants')
+const Promise = require('bluebird')
 const CRON_EXPRESSION = process.env.CRON_EXPRESSION || "*/5 * * * *"
 
 const sleep = (milliseconds) => {
@@ -39,20 +40,21 @@ const run = async (username) => {
     console.info(`[*] GET DATA ${username}`)
     const posts = await TikTokScraper.user(username, { number: 2 });
     const post_collectors = Object.assign([], posts.collector).reverse();
-    post_collectors.forEach(data => {
-        Feed.countDocuments({
+    Promise.map(post_collectors, async data => {
+        const exist = await Feed.countDocuments({
             tiktok_id: data.id
-        }).then(async exist => {
-            if(exist > 0) return
-            if(process.env.WITHOUT_WATERMARK) {
-                data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
-                    meta.authorMeta = {...data.authorMeta}
-                    return meta
-                })
-            }
-            console.log(data.id + " ADDED to Queue")
-            queue.add(data, { delay: 5000 })
         })
+        if(exist > 0) return
+        if(process.env.WITHOUT_WATERMARK) {
+            await sleep(1000)
+            data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
+                meta.authorMeta = {...data.authorMeta}
+                console.log("VIDEO noWatermark OK")
+                return meta
+            })
+        }
+        console.log(data.id + " ADDED to Queue")
+        queue.add(data, { delay: 5000 })
     })
 }
 
