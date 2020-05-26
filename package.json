@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.2",
     "bluebird": "^3.7.2",
     "bull": "^3.14.0",
     "dotenv": "^8.2.0",
