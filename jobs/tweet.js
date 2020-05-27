@@ -71,10 +71,10 @@ queue.on('completed', async function(job, result){
             fs.unlinkSync(filePath)
         }
     } catch (error) {}
-    setTimeout(async() => {
-        await tweet(`Download video: ${result.downloadUrl}`, result.tweet_id)
-        job.remove()
+    setTimeout(() => {
+        tweet(`Download video: ${result.downloadUrl}`, result.tweet_id)
     }, 1000 * 60 * 2)
+    job.remove()
 });
 queue.on('failed', function(job, err){
     console.error(err)
