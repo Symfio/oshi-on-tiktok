@@ -15,7 +15,7 @@ module.exports.USERNAME_LIST = [
 
     // TEAM K3
     'tasyajkt48',
-    'christykt48',
+    'christyjkt48',
     'fiajkt48',
     'abyjkt48',
     'gitajkt48',
