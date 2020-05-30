@@ -27,7 +27,7 @@ module.exports.USERNAME_LIST = [
     'nandajkt48',
     'graciajkt48',
     'shanijkt48',
-    'chikajkt48 ',
+    'chikajkt48',
 
     // Academy
     'asheljkt48',
