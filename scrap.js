@@ -34,6 +34,13 @@ const scrap = async (username, channel) => {
             }
             // console.log(data.id + " ADDED to Queue")
             // queue.add(data, { delay: 5000 })
+            const dataSave = {
+                tiktok_id: data.id,
+                author_id: data.authorMeta.id,
+                author_name: data.authorMeta.name,
+                tiktok_createTime: data.createTime
+            };
+            await Feed.create(dataSave);
             return data;
         } catch (error) {
             return null;
