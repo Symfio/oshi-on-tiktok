@@ -18,5 +18,5 @@ app.get('/stream', (req, res) => channel.subscribe(req, res));
 
 app.listen(3000, '0.0.0.0', () => {
     console.log("Running scrap and server");
-    Promise.delay(5000).then(() => cron(channel));
+    Promise.delay(5000).then(() => scrap(channel));
 });
