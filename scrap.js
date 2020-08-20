@@ -16,19 +16,23 @@ const scrap = async (username, channel) => {
             tiktok_id: data.id
         });
         if(exist > 0) return;
-        if(process.env.WITHOUT_WATERMARK) {
-            data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
-                meta.authorMeta = {...data.authorMeta};
-                return meta;
-            })
-            channel.publish({
-                username: data.authorMeta.name,
-                data
-            }, 'tiktok48');
+        try {
+            if(process.env.WITHOUT_WATERMARK) {
+                data = await TikTokScraper.getVideoMeta(`https://www.tiktok.com/@${data.authorMeta.name}/video/${data.id}`).then(meta => {
+                    meta.authorMeta = {...data.authorMeta};
+                    channel.publish({
+                        username: data.authorMeta.name,
+                        data: meta
+                    }, 'tiktok48');
+                    return meta;
+                }).catch(err => {});
+            }
+            // console.log(data.id + " ADDED to Queue")
+            // queue.add(data, { delay: 5000 })
+            return data;
+        } catch (error) {
+            return null;
         }
-        // console.log(data.id + " ADDED to Queue")
-        // queue.add(data, { delay: 5000 })
-        return data;
     }, {concurrency: 1});
     return true;    
 }
