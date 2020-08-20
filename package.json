@@ -2,11 +2,11 @@
   "name": "tiktok-jkt48",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "engines": {
     "node": "10.19.0"
@@ -17,10 +17,11 @@
     "bluebird": "^3.7.2",
     "bull": "^3.14.0",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "mongoose": "^5.9.14",
-    "node-cron": "^2.0.3",
     "request": "^2.88.2",
     "request-progress": "^3.0.0",
+    "sse-pubsub": "^1.3.0",
     "tiktok-scraper": "^1.1.10",
     "twit": "^2.2.11"
   }
