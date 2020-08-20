@@ -26,6 +26,11 @@ const scrap = async (username, channel) => {
                     }, 'tiktok48');
                     return meta;
                 }).catch(err => {});
+            } else {
+                channel.publish({
+                    username: data.authorMeta.name,
+                    data
+                }, 'tiktok48');
             }
             // console.log(data.id + " ADDED to Queue")
             // queue.add(data, { delay: 5000 })
