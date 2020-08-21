@@ -1,7 +1,7 @@
 require('dotenv').config();
 process.env.TZ = 'Asia/Jakarta';
 const TikTokScraper = require('tiktok-scraper');
-const queue = require('./jobs/tweet');
+// const queue = require('./jobs/tweet');
 const {Feed} = require('./models');
 const { USERNAME_LIST } = require('./constants');
 const Promise = require('bluebird');
@@ -54,8 +54,8 @@ const run = (channel) => {
     return Promise.each(USERNAME_LIST, async (username, index) => {
         await scrap(username, channel);
         if(index >= USERNAME_LIST.length -1) {
-            console.log("Delay 5 sec");
-            await Promise.delay(5000);
+            console.log("Delay 10 sec");
+            await Promise.delay(10 * 1000);
             return run(channel);
         }
         return index;
