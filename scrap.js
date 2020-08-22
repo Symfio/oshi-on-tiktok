@@ -11,7 +11,7 @@ const scrap = async (username, channel) => {
     console.info(`[*] GET DATA ${username}`);
     const posts = await TikTokScraper.user(username, { number: 3 });
     const post_collectors = Object.assign([], posts.collector).reverse();
-    return Promise.map(post_collectors, async data => {
+    await Promise.map(post_collectors, async data => {
         const exist = await Feed.countDocuments({
             tiktok_id: data.id
         });
@@ -46,6 +46,7 @@ const scrap = async (username, channel) => {
             return null;
         }
     }, {concurrency: 1});
+    await Promise.delay(2000);
     return true;    
 }
 
