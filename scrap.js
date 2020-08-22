@@ -9,7 +9,7 @@ const Promise = require('bluebird');
 const scrap = async (username, channel) => {
     // User feed by username
     console.info(`[*] GET DATA ${username}`);
-    const posts = await TikTokScraper.user(username, { number: 3 });
+    const posts = await TikTokScraper.user(username, { number: 2 });
     const post_collectors = Object.assign([], posts.collector).reverse();
     await Promise.map(post_collectors, async data => {
         const exist = await Feed.countDocuments({
