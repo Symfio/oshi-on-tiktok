@@ -50,7 +50,7 @@ app.get('/:username', (req, res) => {
     }
 });
 
-app.listen(3000, '0.0.0.0', () => {
+app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
     console.log("Running scrap and server");
     Promise.delay(5000).then(() => scrap(channel));
 });
