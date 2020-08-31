@@ -5,6 +5,7 @@ const channel = new SSEChannel();
 const scrap = require('./scrap');
 const Promise = require('bluebird');
 const TikTokScraper = require('tiktok-scraper');
+const { query } = require('express');
 
 const corsMiddleware = (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); //replace localhost with actual host
@@ -20,17 +21,20 @@ app.get('/stream', (req, res) => channel.subscribe(req, res));
 app.get('/:username', (req, res) => {
     try {
         const username = req.params.username;
+        const limit = req.query.limit || 10;
         if(!username) return res.status(400).json({
             code:400,
             message: 'Invalid parameter'
         })
-        return TikTokScraper.user(username, { number: 5 }).then(posts => {
+        console.log("limit", limit)
+        return TikTokScraper.user(username, { number: parseInt(limit) }).then(posts => {
             posts.collector = posts.collector.map(post => ({
                 id: post.id, 
                 text: post.text,
                 createTime: post.createTime,
                 authorMeta: post.authorMeta,
                 videoUrl: post.videoUrl,
+                covers: post.covers,
                 webVideoUrl: post.webVideoUrl
             }));
             return res.status(200).json({
@@ -46,7 +50,7 @@ app.get('/:username', (req, res) => {
     }
 });
 
-app.listen(3000, '0.0.0.0', () => {
+app.listen(4000, '0.0.0.0', () => {
     console.log("Running scrap and server");
     Promise.delay(5000).then(() => scrap(channel));
 });
